@@ -1,0 +1,21 @@
+{
+    "name": "beta/bitrix-psr16",
+    "description": "PSR-16 (Simple cache) implementation for Bitrix",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "BitrixPSR16\\": "src/"
+        }
+    },
+    "require": {
+        "psr/simple-cache": "^1.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.6",
+        "vimeo/psalm": "^4.9"
+    },
+    "scripts": {
+        "cs": "phpcs --standard=PSR12 ./src/",
+        "analyze": "psalm --show-info=true"
+    }
+}
