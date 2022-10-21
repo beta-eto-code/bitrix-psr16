@@ -21,7 +21,7 @@ class Cache implements CacheInterface
     public function __construct(
         int $defaultTtl = 3600,
         ?ICacheEngine $cacheEngine = null,
-        string $baseDir = "cache",
+        string $baseDir = "/bitrix/cache",
         string $initDir = ""
     ) {
         $this->defaultTtl = $defaultTtl;
@@ -109,7 +109,7 @@ class Cache implements CacheInterface
             $value = json_encode($value);
         }
 
-        $this->cacheEngine->write($value, $this->baseDir, $this->initDir, $key, $ttl ?? $this->defaultTtl);
+        $this->cacheEngine->write($value, $this->baseDir, $this->initDir, "/$key", $ttl ?? $this->defaultTtl);
         return true;
     }
 
