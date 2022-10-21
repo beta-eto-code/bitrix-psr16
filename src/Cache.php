@@ -2,7 +2,6 @@
 
 namespace BitrixPSR16;
 
-use DateInterval;
 use Exception;
 use Psr\SimpleCache\CacheInterface;
 use Bitrix\Main\Data\ICacheEngine;
@@ -20,13 +19,13 @@ class Cache implements CacheInterface
     private array $allowedClassesForUnpacking = [];
 
     public function __construct(
+        int $defaultTtl = 3600,
         ?ICacheEngine $cacheEngine = null,
         string $baseDir = "cache",
-        string $initDir = "",
-        int $defaultTtl = 3600
+        string $initDir = ""
     ) {
-        $this->cacheEngine = $cacheEngine ?? BitrixCache::createCacheEngine();
         $this->defaultTtl = $defaultTtl;
+        $this->cacheEngine = $cacheEngine ?? BitrixCache::createCacheEngine();
         $this->baseDir = $baseDir;
         $this->initDir = $initDir;
     }
