@@ -78,8 +78,8 @@ class Cache implements CacheInterface
 
         $allowObjectUnpacking = !empty($this->allowedClassesForUnpacking);
         $unpackedData = $allowObjectUnpacking ?
-            unserialize($data, ['allowed_classes' => $this->allowedClassesForUnpacking]) ?? json_decode($data) :
-            json_decode($data);
+            unserialize($data, ['allowed_classes' => $this->allowedClassesForUnpacking]) ?? json_decode($data, true) :
+            json_decode($data, true);
 
         if ($unpackedData !== false && $unpackedData !== null) {
             $data = $unpackedData;
