@@ -64,11 +64,12 @@ class Cache implements CacheInterface
     public function get($key, $default = null)
     {
         $data = '';
+        $key = str_replace('//', '/', "/$key");
         $isSuccess = (bool)$this->cacheEngine->read(
             $data,
             $this->baseDir,
             $this->initDir,
-            "/$key",
+            $key,
             $this->defaultTtl
         );
 
@@ -98,6 +99,7 @@ class Cache implements CacheInterface
      */
     public function set($key, $value, $ttl = null): bool
     {
+        $key = str_replace('//', '/', "/$key");
         if (is_object($value)) {
             if (!$this->isAllowPackingObject($value)) {
                 throw new Exception('this is not allowed for packing');
@@ -109,7 +111,7 @@ class Cache implements CacheInterface
             $value = json_encode($value);
         }
 
-        $this->cacheEngine->write($value, $this->baseDir, $this->initDir, "/$key", $ttl ?? $this->defaultTtl);
+        $this->cacheEngine->write($value, $this->baseDir, $this->initDir, $key, $ttl ?? $this->defaultTtl);
         return true;
     }
 
@@ -119,6 +121,7 @@ class Cache implements CacheInterface
      */
     public function delete($key): bool
     {
+        $key = str_replace('//', '/', "/$key");
         $this->cacheEngine->clean($this->baseDir, $this->initDir, $key);
         return true;
     }
@@ -184,12 +187,13 @@ class Cache implements CacheInterface
      */
     public function has($key): bool
     {
+        $key = str_replace('//', '/', "/$key");
         $data = '';
         return (bool)$this->cacheEngine->read(
             $data,
             $this->baseDir,
             $this->initDir,
-            "/$key",
+            $key,
             $this->defaultTtl
         );
     }
