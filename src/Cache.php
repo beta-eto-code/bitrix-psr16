@@ -2,6 +2,8 @@
 
 namespace BitrixPSR16;
 
+use DateInterval;
+use DateTimeImmutable;
 use Exception;
 use Psr\SimpleCache\CacheInterface;
 use Bitrix\Main\Data\ICacheEngine;
@@ -34,7 +36,7 @@ class Cache implements CacheInterface
      * @param string $className
      * @return void
      */
-    public function addAllowedClass(string $className)
+    public function addAllowedClass(string $className): void
     {
         if (class_exists($className) || interface_exists($className)) {
             $this->allowedClassesForUnpacking[] = $className;
@@ -61,7 +63,7 @@ class Cache implements CacheInterface
      * @param mixed $default
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $data = '';
         $key = str_replace('//', '/', "/$key");
@@ -90,14 +92,10 @@ class Cache implements CacheInterface
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
-     * @param int|null $ttl
-     * @return bool
      * @throws Exception
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function set($key, $value, $ttl = null): bool
+    public function set(string $key, mixed $value, null|int|DateInterval $ttl = null): bool
     {
         $key = str_replace('//', '/', "/$key");
         if (is_object($value)) {
@@ -111,6 +109,12 @@ class Cache implements CacheInterface
             $value = json_encode($value);
         }
 
+        if ($ttl instanceof DateInterval) {
+            $reference = new DateTimeImmutable;
+            $endTime = $reference->add($ttl);
+            $ttl = $endTime->getTimestamp() - $reference->getTimestamp();
+        }
+
         $this->cacheEngine->write($value, $this->baseDir, $this->initDir, $key, $ttl ?? $this->defaultTtl);
         return true;
     }
@@ -119,7 +123,7 @@ class Cache implements CacheInterface
      * @param string $key
      * @return bool
      */
-    public function delete($key): bool
+    public function delete(string $key): bool
     {
         $key = str_replace('//', '/', "/$key");
         $this->cacheEngine->clean($this->baseDir, $this->initDir, $key);
@@ -138,7 +142,7 @@ class Cache implements CacheInterface
      * @return array<string, mixed>
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function getMultiple($keys, $default = null): array
+    public function getMultiple(iterable $keys, mixed $default = null): array
     {
         $result = [];
         foreach ($keys as $key) {
@@ -173,7 +177,7 @@ class Cache implements CacheInterface
      * @return bool
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function deleteMultiple($keys): bool
+    public function deleteMultiple(iterable $keys): bool
     {
         foreach ($keys as $key) {
             $this->delete($key);
@@ -185,7 +189,7 @@ class Cache implements CacheInterface
      * @param string $key
      * @return bool
      */
-    public function has($key): bool
+    public function has(string $key): bool
     {
         $key = str_replace('//', '/', "/$key");
         $data = '';
